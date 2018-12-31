@@ -1,0 +1,5 @@
+2018-12-02 19:44:39 pid:1 Gateway: Worker->name conflict. Key:127.0.0.1:YourAppBusinessWorker:0
+2018-12-02 19:44:40 pid:1 Gateway: Worker->name conflict. Key:127.0.0.1:YourAppBusinessWorker:0
+2018-12-02 19:44:41 pid:1 Gateway: Worker->name conflict. Key:127.0.0.1:YourAppBusinessWorker:0
+2018-12-02 19:44:42 pid:1 Gateway: Worker->name conflict. Key:127.0.0.1:YourAppBusinessWorker:0
+2018-12-28 22:36:06 pid:25415 Workerman[start.php] start in DEBUG mode
