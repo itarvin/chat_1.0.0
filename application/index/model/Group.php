@@ -9,15 +9,22 @@ class Group extends Model{
     public function lists($user_id)
 	{
         $where[] = ['user_id','eq', $user_id];
+        $groupUserMod = new GroupUser;
+        $groups = [];
+        // 统计
+        $group = $groupUserMod->where('u_id', $user_id)->select();
+        foreach ($group as $key => $value) {
+            $groups[] = $this->field('groupname,id')->where('id', $value['g_id'])->find()->toArray();
+        }
         // 查询当前用户有哪些组
-        $current = $this->field('groupname,id')->where($where)->select();
+        $cur = $this->field('groupname,id')->where($where)->select()->toArray();
+        $current = array_merge($groups,$cur);
         $result = [];
         foreach ($current as $key => $va) {
             $result[$key] = $va;
-            $friends = (new GroupUser)->alias('a')->field('b.*')
+            $friends = $groupUserMod->alias('a')->field('b.*')
             ->leftJoin('user b', 'a.u_id = b.id')
-            ->where('a.g_id',$va['id'])->select();
-            $result[$key]['online'] = $key + 1;
+            ->where('a.g_id',$va['id'])->select()->toArray();
             $result[$key]['list'] = $friends;
         }
         return $result;

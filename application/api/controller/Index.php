@@ -27,7 +27,6 @@ class Index extends Controller
         }
         $data = $userMod->getInfo($param['user_id']);
         $data['status'] = $data['online'];
-        $data['id'] = (string)$data['id'];
         $feiend = $groupMod->lists($data['id']);
         $group = (new Crowd)->select();
         $result = ['mine' => $data, 'friend' => $feiend, 'group' => $group];

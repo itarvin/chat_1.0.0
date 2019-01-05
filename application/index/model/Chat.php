@@ -20,7 +20,6 @@ class Chat extends Model{
      */
 	public function store($data)
 	{
-        $data['content'] = $data['data'];
         $data['fromname']= (new User)->getInfo($data['fromid'],'username');
         $data['toname']= (new User)->getInfo($data['toid'],'username');
         if($this->allowField(true)->save($data)) {

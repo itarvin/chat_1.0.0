@@ -23,18 +23,16 @@ if(!/^http(s*):\/\//.test(location.href)){
 }
 layui.use('layim', function(layim){
     //建立WebSocket通讯
-    var socket = new WebSocket('ws://127.0.0.1:8282');
+    var socket = new WebSocket('wss://119.23.246.10:8282');
     // //发送一个消息
     var fromid = "{$form}";
     sessionStorage.setItem('user_id',fromid);
-    var info;
     //连接成功时触发
     socket.onopen = function(){
         socket.send('上线了！');
     };
     socket.onmessage = function(e){
         var message =  eval("("+e.data+")");
-        console.log(message);
         switch (message.type){
             case "init":
                 var bild = '{"type":"bind","fromid":"'+fromid+'"}';
@@ -43,30 +41,24 @@ layui.use('layim', function(layim){
                 layim.config({
                     //或采用以下方式初始化接口
                     init: {
-                        url: '{:url('api/index/mine')}?user_id='+fromid
+                        url: '/api/index/mine?user_id='+fromid
                         ,data: {}
                     }
                     //查看群员接口
                     ,members: {
-                        url: '{:url('api/index/friends')}?user_id='+fromid
+                        url: '/api/index/friends?user_id='+fromid
                         ,data: {}
                     }
                     //上传图片接口
                     ,uploadImage: {
-                        url: '/upload/image' //（返回的数据格式见下文）
+                        url: '/api/api/upload' //（返回的数据格式见下文）
                         ,type: '' //默认post
                     }
                     //上传文件接口
                     ,uploadFile: {
-                        url: '/upload/file' //（返回的数据格式见下文）
+                        url: '/api/api/upload' //（返回的数据格式见下文）
                         ,type: '' //默认post
                     }
-                    //扩展工具栏
-                    ,tool: [{
-                        alias: 'code'
-                        ,title: '代码'
-                        ,icon: '&#xe64e;'
-                    }]
                     ,initSkin: '5.jpg' //1-5 设置初始背景
                     ,notice: true //是否开启桌面消息提醒，默认false
                     ,msgbox: layui.cache.dir + 'css/modules/layim/html/msgbox.html' //消息盒子页面地址，若不开启，剔除该项即可
@@ -75,12 +67,13 @@ layui.use('layim', function(layim){
                 });
                 return;
             case "text":
+                console.log(message);
                 if(fromid == message.toid) {
                     $.ajax({
                         type:"post",
-                        url: "{:url('api/index/userinfo')}",
+                        url: "/api/index/userinfo",
                         dataType:"json",
-                        data:{'user_id':message.toid},
+                        data:{'user_id':message.fromid},
                         success:function(res){
                             if(res.code == 0){
                                 var data = res.data;
@@ -88,9 +81,9 @@ layui.use('layim', function(layim){
                                 layim.getMessage({
                                     username: data.username
                                     ,avatar: data.avatar
-                                    ,id: data.id
+                                    ,id: message.fromid
                                     ,type: "friend"
-                                    ,content: message.data
+                                    ,content: message.content
                                     ,timestamp: new Date().getTime()
                                 });
                             }
@@ -99,102 +92,65 @@ layui.use('layim', function(layim){
                 }
                 return;
             case "save":
-                // 打印到页面
-                obj = {
-                    username: To.name
-                    ,avatar: To.avatar
-                    ,id: To.id
-                    ,type: To.type
-                    ,content: message.data
-                }
-                layim.getMessage(obj);
                 // 存储
-                save_message(message);
+                var data = {
+                    content: message.content,
+                    fromid: message.fromid,
+                    isread: message.isread,
+                    time: message.time,
+                    toid: message.toid
+                };
+                save_message(data);
                 return;
-
-            case  "online":
-
         }
     }
-    // layim.chat({
-    //     name: '在线客服-小苍'
-    //     ,type: 'kefu'
-    //     ,avatar: 'http://tva3.sinaimg.cn/crop.0.0.180.180.180/7f5f6861jw1e8qgp5bmzyj2050050aa8.jpg'
-    //     ,id: -1
-    // });
-    // layim.chat({
-    //     name: '在线客服-心心'
-    //     ,type: 'kefu'
-    //     ,avatar: 'http://tva1.sinaimg.cn/crop.219.144.555.555.180/0068iARejw8esk724mra6j30rs0rstap.jpg'
-    //     ,id: -2
-    // });
-    // layim.setChatMin();
     //监听在线状态的切换事件
     layim.on('online', function(data){
         var user_id = sessionStorage.getItem('user_id');
         $.ajax({
             type:"post",
-            url: "{:url('api/index/change')}",
+            url: "/api/index/change",
             dataType:"json",
             data:{online:data,user_id:user_id},
-            success:function(res){
-                console.log(res);
-            }
+            success:function(res){}
         });
     });
     //监听签名修改
     layim.on('sign', function(value){
         update_sign(value, fromid)
     });
-    //监听自定义工具栏点击，以添加代码为例
-    // layim.on('tool(code)', function(insert){
-    //     layer.prompt({
-    //         title: '插入代码'
-    //         ,formType: 2
-    //         ,shade: 0
-    //     }, function(text, index){
-    //         layer.close(index);
-    //         insert('[pre class=layui-code]' + text + '[/pre]'); //将内容插入到编辑器
-    //     });
-    // });
     //监听layim建立就绪
     layim.on('ready', function(res){
         layim.msgbox(1); //模拟消息盒子有新消息，实际使用时，一般是动态获得
         //添加好友（如果检测到该socket）
-        // layim.addList({
-        //     type: 'group'
-        //     ,avatar: "http://tva3.sinaimg.cn/crop.64.106.361.361.50/7181dbb3jw8evfbtem8edj20ci0dpq3a.jpg"
-        //     ,groupname: 'Angular开发'
-        //     ,id: "12333333"
-        //     ,members: 0
-        // });
-        // layim.addList({
-        //     type: 'friend'
-        //     ,avatar: "http://tp2.sinaimg.cn/2386568184/180/40050524279/0"
-        //     ,username: '冲田杏梨'
-        //     ,groupid: 2
-        //     ,id: "1233333312121212"
-        //     ,remark: "本人冲田杏梨将结束AV女优的工作"
-        // });
     });
     //监听发送消息
     layim.on('sendMessage', function(data){
         var To = data.to;
         var from = data.mine;
-        var message = '{"data":"'+from.content+'","type":"say","fromid":"'+from.id+'","toid":"'+To.id+'"}';
-        if(To.type === 'friend'){
-            layim.setChatStatus('<span style="color:#FF5722;">对方正在输入。。。</span>');
+        var message = '{"content":"'+from.content+'","type":"say","fromid":"'+from.id+'","toid":"'+To.id+'"}';
+        if(from.id == To.id){
+            var message = {
+                content : from.content,
+                type : "say",
+                fromid : from.id,
+                toid : To.id,
+            };
+            save_message(message);
+        }else{
+            if(To.type === 'friend'){
+                layim.setChatStatus('<span style="color:#FF5722;">对方正在输入。。。</span>');
+            }
+            socket.send(message);
         }
-        socket.send(message);
     });
     //监听查看群员
     layim.on('members', function(data){
-    console.log(data);
+        console.log(data);
     });
     //监听聊天窗口的切换
     layim.on('chatChange', function(res){
         var type = res.data.type;
-        console.log(res.data.id)
         if(type === 'friend'){
             //模拟标注好友状态
             layim.setChatStatus('<span style="color:#FF5722;">在线</span>');
@@ -211,18 +167,17 @@ layui.use('layim', function(layim){
     });
     function save_message(message){
         $.ajax({
-            type:"post",
-            url: "{:url('api/chat/save_message')}",
-            dataType:"json",
-            data:message,
+            type : "post",
+            url : "/api/chat/save_message",
+            dataType : "json",
+            data : message,
             success:function(res){}
         });
     }
-
     function update_sign(message, user_id){
         $.ajax({
             type:"post",
-            url: "{:url('api/index/change')}",
+            url: "/api/index/change",
             dataType:"json",
             data:{'user_id':user_id,'sign':message},
             success:function(res){}

@@ -13,7 +13,7 @@
 // | 应用设置
 // +----------------------------------------------------------------------
 
-return [
+$retn = [
     // 应用名称
     'app_name'               => '',
     // 应用地址
@@ -144,3 +144,17 @@ return [
     'exception_handle'       => '',
 
 ];
+
+
+
+//动态引入站点属性配置
+$file = ['sms','variable','config','cos','blnPay'];
+foreach ($file as $key => $vo) {
+    if (file_exists($file = '../config/setting/'.$vo.'.php')) {
+       $retn[$vo] = include $file;
+   }else {
+       $retn[$vo] = [];
+   }
+}
+
+return $retn;

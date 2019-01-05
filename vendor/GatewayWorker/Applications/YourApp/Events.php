@@ -69,12 +69,12 @@ class Events
                Gateway::bindUid($client_id, $fromid);
                return;
            case "say":
-               $text = nl2br(htmlspecialchars($message_data['data']));
+               $text = nl2br(htmlspecialchars($message_data['content']));
                $fromid = $message_data['fromid'];
                $toid = $message_data['toid'];
                $date = [
                    'type' => 'text',
-                   'data' => $text.'2221',
+                   'content' => $text,
                    'fromid' => $fromid,
                    'toid' => $toid,
                    'time' => time()

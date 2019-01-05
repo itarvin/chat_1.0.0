@@ -13,7 +13,7 @@ class Chat extends Controller{
         header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE');
         header('Access-Control-Max-Age: 1728000');
     }
-    
+
     /**
      *文本消息的数据持久化
      */
