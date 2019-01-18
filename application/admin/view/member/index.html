@@ -1,0 +1,114 @@
+{layout name="layout/content"}
+<div class="widget-body  am-fr">
+	<form class="am-form-inline" role="form" method="post" action="{:url('member/index')}?{:request()->query()}">
+		<div class="am-form-group">
+			<select data-am-selected name="ktype">
+				<option value='' {if input('ktype') eq ''}selected{/if}></option>
+				<option value='username' {if input('ktype') eq 'username'}selected{/if}>用户名</option>
+				<option value='nickname' {if input('ktype') eq 'nickname'}selected{/if}>QQ</option>
+				<option value='realname' {if input('ktype') eq 'realname'}selected{/if}>微信</option>
+				<option value='phone' {if input('ktype') eq 'phone'}selected{/if}>电话</option>
+				<option value='id' {if input('ktype') eq 'id'}selected{/if}>ID</option>
+				{if request()->param()['type'] eq '1'}
+				<option value='sellid' {if input('ktype') eq 'sellid'}selected{/if}>Sellid</option>
+				{/if}
+			</select>
+		</div>
+		<div class="am-form-group">
+			<input type="text" class="am-form-field" placeholder="搜索关键字" name="keyword" value="{:input('keyword')}">
+		</div>
+		<button type="submit" class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search"></button>
+	</form>
+	<hr data-am-widget="divider" style="" class="am-divider am-divider-dashed" />
+	<div class="am-cf" style="padding: 10px; border: 1px dashed #ddd">
+		<span class="am-fl am-badge am-badge-success am-text-lg">{if $username != ''}{$username}的客户{/if}</span>
+		<span class="am-fr">共计 {$data->total()} 条</span>
+	</div>
+    <div class="am-u-sm-12">
+		<div class="am-scrollable-horizontal">
+	        <table width="100%" class="am-table am-table-bordered am-table-striped am-text-nowrap">
+	            <thead>
+	                <tr>
+						<th>ID</th>
+						<th>头像</th>
+						<th>用户名</th>
+						<th>联系方式</th>
+						<th>状态</th>
+						{if $type neq 'softdelete' && $type eq 1}
+						<th>推广</th>
+						{/if}
+						<th>创建时间</th>
+						<th>操作</th>
+	                </tr>
+	            </thead>
+	            <tbody>
+					{volist name="data" id="vo"}
+	                    <tr class="gradeX" id="tr_{$vo.id}">
+							<td class="am-text-middle">{$vo.id}</td>
+							<td class="am-text-middle">
+								{if request()->param()['type'] neq 'softdelete'}
+									<a href="javascript:;" onclick="x_show('查看会员详情','{:url('member/edit',array('id'=>$vo.id,'action' => 'show'))}')"><i class="far fa-eye"></i>
+										<img src="{$vo.photo|default='/static/defa.png'}" class="tpl-table-line-img" width="50" height="50" alt="">
+									</a>
+								{else /}
+									<img src="{$vo.photo|default='/static/defa.png'}" class="tpl-table-line-img" alt="">
+								{/if}
+							</td>
+							<td class="am-text-middle">
+								{if $type neq 'softdelete' && $type ==1}
+									<a href="{:url('member/edit',array('action' => 'show', 'id' => $vo.id))}">
+										<div>
+											{$vo.realname|default=$vo.nickname}
+										</div>
+										<div>{$vo.phone}</div>
+									</a>
+								{else /}
+									{$vo.username}
+									<br/>{$vo.phone}
+								{/if}
+							</td>
+							<td class="am-text-middle">{$vo.info.qq}<br />{$vo.info.weixin}</td>
+							<td class="am-text-middle">{$vo.status|variable="member_status"}</td>
+							{if $type neq 'softdelete' && $type eq 1 }
+								<td class="am-text-middle">
+									<label class="am-switch am-switch-success">
+									    <input type="checkbox" ajax-action="{:url('member/onduty',['id' => $vo.id])}" event="change" {if $vo.onduty eq 1}checked{/if} success="hide">
+									    <span class="am-switch-checkbox"></span>
+									</label>
+								</td>
+							{/if}
+							<td class="am-text-middle">{$vo.add_time}</td>
+	                        <td class="am-text-middle">
+	                            <div class="tpl-table-black-operation">
+									{if request()->param()['type'] neq 'softdelete'}
+										<a href="{:url('member/edit',['id' => $vo.id])}">
+		                                    <i class="am-icon-pencil"></i> 编辑
+		                                </a>
+										{if $vo.type}
+											<a href="{:url('member/index',['type' => '0','parent_id' => $vo.id])}">
+			                                    <i class="am-icon-user"></i> 客户
+			                                </a>
+										{/if}
+		                                <a href="{:url('member/delete',['id' => $vo.id])}" ajax-action confirm="您确定要删除当前会员吗？" remove-el="#tr_{$vo.id}" class="tpl-table-black-operation-del">
+		                                    <i class="am-icon-trash"></i> 删除
+		                                </a>
+									{else/}
+									<a href="{:url('member/recall',['id' => $vo.id])}">
+										<i class="am-icon-history"></i> 撤回
+									</a>
+									{/if}
+	                            </div>
+	                        </td>
+	                    </tr>
+					{/volist}
+	                <!-- more data -->
+	            </tbody>
+	        </table>
+		</div>
+    </div>
+    <div class="am-u-lg-12 am-cf">
+        <div class="am-fr">
+			{$data|raw}
+        </div>
+    </div>
+</div>

@@ -3,3 +3,48 @@
 2018-12-02 19:44:41 pid:1 Gateway: Worker->name conflict. Key:127.0.0.1:YourAppBusinessWorker:0
 2018-12-02 19:44:42 pid:1 Gateway: Worker->name conflict. Key:127.0.0.1:YourAppBusinessWorker:0
 2018-12-28 22:36:06 pid:25415 Workerman[start.php] start in DEBUG mode
+2019-01-08 13:02:05 pid:7065 Workerman[start.php] stop 
+2019-01-08 13:02:05 pid:7065 Workerman[start.php] is stopping ...
+2019-01-08 13:02:05 pid:13963 Workerman[start.php] stopping ...
+2019-01-08 13:02:05 pid:13963 Workerman[start.php] has been stopped
+2019-01-08 13:02:05 pid:7065 Workerman[start.php] stop success
+2019-01-08 13:04:27 pid:7475 Workerman[start.php] start in DEBUG mode
+2019-01-08 13:04:29 pid:7475 Workerman[start.php] stopping ...
+2019-01-08 13:04:29 pid:7475 Workerman[start.php] has been stopped
+2019-01-08 13:04:33 pid:7485 Workerman[start.php] start in DAEMON mode
+2019-01-18 12:26:35 pid:30593 Workerman[start.php] stop 
+2019-01-18 12:26:35 pid:30593 Workerman[start.php] not run
+2019-01-18 12:26:40 pid:30594 Workerman[start.php] start in DEBUG mode
+2019-01-18 12:26:47 pid:30595 Workerman[start.php] start in DEBUG mode
+2019-01-18 12:26:48 pid:30596 Workerman[start.php] start in DEBUG mode
+2019-01-18 12:26:49 pid:30597 Workerman[start.php] start in DEBUG mode
+2019-01-18 12:31:44 pid:30606 Workerman[start.php] stop 
+2019-01-18 12:31:44 pid:30606 Workerman[start.php] not run
+2019-01-18 12:43:34 pid:30681 Workerman[start.php] start in DEBUG mode
+2019-01-18 12:44:10 pid:30682 Workerman[start.php] start in DEBUG mode
+2019-01-18 12:45:07 pid:30686 Workerman[start.php] start in DEBUG mode
+2019-01-18 12:45:10 pid:30686 Workerman[start.php] stopping ...
+2019-01-18 12:45:10 pid:30686 Workerman[start.php] has been stopped
+2019-01-18 12:45:12 pid:30696 Workerman[start.php] start in DAEMON mode
+2019-01-18 12:46:03 pid:30698 worker[YourAppGateway:30703] exit with status 9
+2019-01-18 12:46:05 pid:30698 worker[YourAppGateway:30704] exit with status 9
+2019-01-18 12:46:07 pid:30698 worker[YourAppGateway:30705] exit with status 9
+2019-01-18 12:46:08 pid:30698 worker[YourAppGateway:30706] exit with status 9
+2019-01-18 12:47:57 pid:30719 Workerman[start.php] stop 
+2019-01-18 12:47:57 pid:30719 Workerman[start.php] is stopping ...
+2019-01-18 12:47:57 pid:30698 Workerman[start.php] stopping ...
+2019-01-18 12:47:57 pid:30698 Workerman[start.php] has been stopped
+2019-01-18 12:47:57 pid:30719 Workerman[start.php] stop success
+2019-01-18 12:48:07 pid:30720 Workerman[start.php] start in DAEMON mode
+2019-01-18 13:10:27 pid:30747 Workerman[start.php] stop 
+2019-01-18 13:10:27 pid:30747 Workerman[start.php] is stopping ...
+2019-01-18 13:10:27 pid:30722 Workerman[start.php] stopping ...
+2019-01-18 13:10:27 pid:30722 Workerman[start.php] has been stopped
+2019-01-18 13:10:27 pid:30747 Workerman[start.php] stop success
+2019-01-18 13:10:31 pid:30748 Workerman[start.php] start in DAEMON mode
+2019-01-18 13:11:21 pid:30760 Workerman[start.php] stop 
+2019-01-18 13:11:21 pid:30760 Workerman[start.php] is stopping ...
+2019-01-18 13:11:21 pid:30750 Workerman[start.php] stopping ...
+2019-01-18 13:11:21 pid:30750 Workerman[start.php] has been stopped
+2019-01-18 13:11:21 pid:30760 Workerman[start.php] stop success
+2019-01-18 13:11:23 pid:30761 Workerman[start.php] start in DAEMON mode

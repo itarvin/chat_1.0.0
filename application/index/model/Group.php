@@ -13,14 +13,15 @@ class Group extends Model{
         $groups = [];
         // 统计
         $group = $groupUserMod->where('u_id', $user_id)->select();
-        foreach ($group as $key => $value) {
-            $groups[] = $this->field('groupname,id')->where('id', $value['g_id'])->find()->toArray();
-        }
+        // foreach ($group as $key => $value) {
+        //     $groups[] = $this->field('groupname,id')->where('id', $value['g_id'])->find()->toArray();
+        // }
         // 查询当前用户有哪些组
         $cur = $this->field('groupname,id')->where($where)->select()->toArray();
-        $current = array_merge($groups,$cur);
+        // var_dump($cur);die;
+        // $current = array_merge($groups,$cur);
         $result = [];
-        foreach ($current as $key => $va) {
+        foreach ($cur as $key => $va) {
             $result[$key] = $va;
             $friends = $groupUserMod->alias('a')->field('b.*')
             ->leftJoin('user b', 'a.u_id = b.id')

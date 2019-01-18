@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>{$title|default="itarvin"}</title>
+<meta name="keywords" content="{:getconf('web_keywords')}" />
+<meta name="description" content="{:getconf('web_description')}" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="__HOME__/css/index.css" rel="stylesheet">
+<script src="__HOME__/js/jquery.min.js" ></script>
+<script src="__HOME__/js/comm.js" ></script>
+<link rel="stylesheet" type="text/css" href="__HOME__/highlight/styles/androidstudio.css">
+<script src="__HOME__/highlight/highlight.pack.js"></script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+<!--[if lt IE 9]>
+<script src="__HOME__/js/modernizr.js"></script>
+<![endif]-->
+</head>
+<body>
+<div id="spig" class="spig">
+    <div id="message">正在加载中……</div>
+    <div id="mumu" class="mumu"></div>
+</div>
+<header>
+    <div class="logo">itarvin</div>
+    <div class="top-nav">
+        <h2 id="mnavh"><span class="navicon"></span></h2>
+        <ul id="nav">
+            <li><a href="/">网站首页</a></li>
+            <li><a href="{:url('index/index/index')}">去聊天室</a></li>
+        </ul>
+    </div>
+    <div class="search">
+        <form action="{:url('index/index')}" method="post">
+            <input name="keyboard" class="input_text" placeholder="搜索你喜欢的" style="color: rgb(153, 153, 153);"  type="text">
+            <input class="input_submit" type="submit">
+        </form>
+    </div>
+</header>
+<aside class="side">
+    <div class="about"> <i><a href="/"><img src="{:getconf('wx_logo')}"></a></i>
+        <p style="text-align: center;font-size:20px;">{:getconf('web_mename')}</p>
+        <p style="text-align: center;">{:getconf('web_me')}</p>
+        <p style="text-indent:2em;">{:getconf('web_resume')}</p>
+    </div>
+</aside>
+<main>
+    <div class="main-content">
+        <div class="welcome">
+            <a href="https://www.itarvin.info/">
+                您好，欢迎您访问我的主站！
+            </a>
+        </div>
+
+		{__CONTENT__}
+
+		<div class="copyright">
+            <p>Copyright 2019  Inc. AllRights Reserved<a href="/"> itarvin</a> 蜀ICP备17021392号-2</p>
+        </div>
+    </div>
+</main>
+<a href="#" class="cd-top cd-is-visible">Top</a>
+<!--小人end*-->
+{load href="__HOME__/spig/spig.js" /}
+{load href="__HOME__/spig/spigPet.css" /}
+<script type="text/javascript">
+var isindex = true;
+var visitor = true;
+</script>
+</body>
+</html>

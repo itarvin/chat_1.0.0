@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>我的信息</title>
+{load href="__STATIC__/layui/css/layui.css" /}
+<style>
+body .layim-chat-main{height: auto;}
+</style>
+</head>
+<body>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <h3>编辑资料</h3>
+    </fieldset>
+    <form class="layui-form layui-form-pane" action="" lay-filter="myinfo">
+        <div class="layui-form-item">
+            <label class="layui-form-label">昵称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="username" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">头像</label>
+            <div class="layui-input-inline">
+                <img class="layui-upload-img" id="img" style="width:70px;height:70px;padding-left:10px;">
+                <p id="demoText"></p>
+                <input type="hidden" name="avatar" id="avatar">
+                <button type="button" class="layui-btn" id="upload">上传图片</button>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">签名</label>
+            <div class="layui-input-inline">
+                <input type="text" name="sign" lay-verify="required" placeholder="请输入签名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item" pane="">
+            <div class="layui-inline">
+                <label class="layui-form-label">生日</label>
+                <div class="layui-input-block">
+                    <input type="text" name="born" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="sex" value="男" title="男" checked="">
+                    <input type="radio" name="sex" value="女" title="女">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">邮箱</label>
+            <div class="layui-input-inline">
+                <input type="text" name="email" placeholder="你的邮箱" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">个人说明</label>
+            <div class="layui-input-block">
+                <textarea placeholder="介绍一下自己吧" name="desc" cols="2" rows="1" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="" lay-filter="updateInfo">立即提交</button>
+            </div>
+        </div>
+    </form>
+{load href="__STATIC__/layui/layui.js" /}
+<script type="text/javascript" src="https://www.itarvin.info/static/home/js/jquery.min.js"></script>
+<script type="text/javascript">
+layui.use(['form', 'layedit', 'laydate','upload'], function(){
+    var form = layui.form
+    ,layer = layui.layer
+    ,layedit = layui.layedit
+    ,laydate = layui.laydate
+    ,upload = layui.upload;
+
+    //日期
+    laydate.render({
+    elem: '#date'
+    });
+    // console.log(form);
+    //拖拽上传
+    var uploadInst = upload.render({
+        elem: '#upload'
+        ,url: '/api/api/upload'
+        ,field: "file"
+        ,before: function(obj){
+        //预读本地文件示例，不支持ie8
+            obj.preview(function(index, file, result){
+                $('#img').attr('src', result); //图片链接（base64）
+            });
+        }
+        ,done: function(res){
+            var data = res.data;
+            //如果上传失败
+            if(res.status > 200){
+                return layer.msg(res.msg);
+            }
+            //上传成功
+            $('#avatar').val(data.src);
+        }
+        ,error: function(){
+            //演示失败状态，并实现重传
+            var demoText = $('#demoText');
+            demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+            demoText.find('.demo-reload').on('click', function(){
+                uploadInst.upload();
+            });
+        }
+    });
+
+    // //监听提交
+    form.on('submit(updateInfo)', function(data){
+        $.ajax({
+            type: 'post',
+            url: 'http://www.itarvin.top/api/index/change',
+            dataType: 'json',
+            data: data.field,
+            success: function(msg){
+                // 关闭加载层
+                var tips = layer.load();
+                layer.close(tips);
+                if(msg.code == 1){
+                    layer.msg(msg.msg);
+                }else {
+                    layer.msg(msg.msg);
+                }
+            },
+            beforeSend:function(XMLHttpRequest){
+                var tips = layer.load(0, {shade: false});
+            },
+        });
+        return false;
+    });
+    $(function(){
+        $.ajax({
+            type: 'post',
+            url: 'http://www.itarvin.top/api/index/my_info',
+            dataType: 'json',
+            data: {},
+            success: function(msg){
+                // 关闭加载层
+                var tips = layer.load();
+                layer.close(tips);
+                console.log(msg);
+                if(msg.code == 1){
+                    var data = msg.data;
+                   //表单初始赋值
+                    form.val('myinfo', {
+                        "username": data.username // "name": "value"
+                        ,"email": data.email //开关状态
+                        ,"sign": data.sign
+                        ,"avatar":data.avatar
+                        ,"born": data.born
+                        ,"sex": data.sex
+                        ,"desc": data.desc
+                    })
+                    $('#img').attr('src', data.avatar);
+                }else {
+                    layer.msg(msg.msg);
+                }
+            },
+            beforeSend:function(XMLHttpRequest){
+                var tips = layer.load(0, {shade: false});
+            },
+        });
+        return false;
+    });
+
+
+});
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>LayIM 3.x</title>
+<title>itarvin IM</title>
 {load href="__STATIC__/layui/css/layui.css" /}
 <script type="text/javascript" src="http://www.jq22.com/js/jquery.min.js"></script>
 <style>
@@ -23,7 +23,7 @@ if(!/^http(s*):\/\//.test(location.href)){
 }
 layui.use('layim', function(layim){
     //建立WebSocket通讯
-    var socket = new WebSocket('wss://119.23.246.10:8282');
+    var socket = new WebSocket('ws://119.23.246.10:8282');
     // //发送一个消息
     var fromid = "{$form}";
     sessionStorage.setItem('user_id',fromid);
@@ -121,8 +121,20 @@ layui.use('layim', function(layim){
     });
     //监听layim建立就绪
     layim.on('ready', function(res){
-        layim.msgbox(1); //模拟消息盒子有新消息，实际使用时，一般是动态获得
-        //添加好友（如果检测到该socket）
+        var user_id = sessionStorage.getItem('user_id');
+        $.ajax({
+            type:"post",
+            url: "/api/chat/get_msg",
+            dataType:"json",
+            data:{'user_id':user_id,'count':'true'},
+            success:function(res){
+                var num = res.data;
+                if(res.code == 1 && num && num != 0){
+                    layim.msgbox(num); //模拟消息盒子有新消息，实际使用时，一般是动态获得
+                    //添加好友（如果检测到该socket）
+                }
+            }
+        });
     });
     //监听发送消息
     layim.on('sendMessage', function(data){

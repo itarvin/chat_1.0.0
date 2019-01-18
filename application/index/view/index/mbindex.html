@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>LayIM 移动版</title>
+<title>itarvin IM</title>
 {load href="__STATIC__/layui/dist/css/layui.mobile.css" /}
 {load href="__STATIC__/layui/dist/css/modules/layim/mobile/layim.css" /}
 {load href="__STATIC__/layui/dist/layui.js" /}
@@ -20,7 +20,7 @@ layui.config({
     ,layer = mobile.layer;
 
     //建立WebSocket通讯
-    var socket = new WebSocket('wss://119.23.246.10:8282');
+    var socket = new WebSocket('ws://119.23.246.10:8282');
     // //发送一个消息
     var fromid = "{$form}";
     sessionStorage.setItem('user_id',fromid);

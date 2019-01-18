@@ -1,0 +1,126 @@
+{layout name="index/layout"}
+<script type="text/javascript">
+    <!-- 替换 -->
+    $(function(){
+        var data = $('#entry pre');
+        for (var i = 0; i < data.length; i++) {
+            var text = $(data[i]).text();
+            html = "<pre><code class='python' width=20>"+text+"</code></pre>";
+            $(data[i]).replaceWith(html);
+        }
+    })
+</script>
+<style>
+    pre code {font-size: 1.1em}
+    pre {
+        position: relative;
+        margin-bottom: 24px;
+        border-radius: 3px;
+        background: #FFF;
+        overflow: hidden;
+    }
+    code {
+        display: block;
+        overflow-y: auto;
+        font-family: Menlo, monospace;
+        line-height:25px;
+    }
+    .hljs{
+        padding:0 0.5em!important;
+    }
+    .pre-numbering {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width:auto;
+        line-height:25px;
+        padding:0 5px 0 0;
+        border-right: 1px solid #C3CCD0;
+        border-radius: 3px 0 0 3px;
+        background-color: #EEE;
+        text-align: right;
+        font-family: Menlo, monospace;
+        font-size: 1.1em;
+        color: #AAA;
+    }
+</style>
+<div class="blogbox">
+    <div class="contentbox">
+        <h2 class="contitle">{$data.title}</h2>
+        <p class="bloginfo"><span>itarvin</span><span>{$data.createtime|time_ago}</span><span><a href="/">
+            {$data.cate_name}
+        </a></span></p>
+        <p class="jianjie"><b>简介</b>{$data.keywords}</p>
+        <div class="entry" id="entry">
+            {:html_entity_decode($data->content)}
+        </div>
+        <div class="nextinfo">
+            {if !empty($front)}
+                <p>上一篇：<a href="{:url('index/info',array('artid' => $front['id']))}">{$front->title}</a></p>
+            {else /}
+                <p>上一篇：<a href="{:url('index/list')}">没有啦！返回列表</a></p>
+            {/if}
+            {if !empty($after)}
+                <p>下一篇：<a href="{:url('index/show',array('artid' => $after['id']))}">{$after->title}</a></p>
+            {else /}
+                <p>下一篇：<a href="{:url('index/list')}">没有啦！返回列表</a></p>
+            {/if}
+        </div>
+    </div>
+    <div class="viewbox">
+        <h2 class="newstitle"><b>随便看看</b></h2>
+        <ul>
+            {volist name="conform" id="vo"}
+                <li>
+                    <a href="{:url('index/show',['id' => $vo.id])}">
+                        <i>
+                            <img src="{$vo.picture}">
+                        </i>
+                        <p>{$vo.title}</p>
+                        <span>{$vo.createtime|time_ago}</span>
+                    </a>
+                </li>
+            {/volist}
+        </ul>
+    </div>
+    <div class="pinlun">
+        <h2 class="newstitle"><b>评论</b></h2>
+        <div class="gbok">
+            评论插件
+        </div>
+    </div>
+</div>
+<div class="rside">
+    <div class="news">
+        <h2 class="newstitle"><b>文章排行</b></h2>
+        <ul>
+            {volist name="lists" id="vo"}
+                <li>
+                    <a href="{:url('index/show',['id' => $vo.id])}">
+                        <span>{$vo.createtime|time_ago}</span>{$vo.title}
+                    </a>
+                </li>
+            {/volist}
+        </ul>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function() {
+    $('pre code').each(function() {
+        var lines = $(this).text().split('\n').length;
+        if (lines < 4) return;  // 当行数小于4时不显示行号
+        var $numbering = $('<ol/>').addClass('pre-numbering');
+        $(this)
+            .addClass('has-numbering')
+            .parent()
+            .append($numbering);
+        for(i=1;i<=lines;i++) {
+            $numbering.append($('<li/>').text(i));
+        }
+    });
+    var numwid=$('.pre-numbering').width()+6+'px';
+    // console.log(numwid);
+    $('.has-numbering').css({'margin-left':numwid});
+});
+</script>

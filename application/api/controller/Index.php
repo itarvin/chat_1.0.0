@@ -9,12 +9,10 @@ use think\Request;
 class Index extends Controller
 {
     protected $param;
+    protected $isLogin;
     protected function initialize(){
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Headers: Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, X-Requested-With');
-        header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE');
-        header('Access-Control-Max-Age: 1728000');
         $this->param = $this->request->param();
+        $this->isLogin = session("layimId");
     }
 
     public function mine()
@@ -33,6 +31,14 @@ class Index extends Controller
         return json(['code' => 0, 'msg' => '', 'data' => $result]);
     }
 
+    public function my_info()
+    {
+        $userMod = new User;
+        $field = ['username','avatar','sign','email','born','desc','sex','desc'];
+        $userinfo = $userMod->getInfo($this->isLogin,$field);
+        return json(['code' => 1, 'msg' => '', 'data' => $userinfo]);
+    }
+
     public function friends()
     {
         $param = $this->param;
@@ -47,7 +53,8 @@ class Index extends Controller
     {
         $userMod = new User;
         $param = $this->param;
-        $data = $userMod->getInfo($param['user_id']);
+        $field = ['id','username','avatar','sign','email','born','desc','sex','desc'];
+        $data = $userMod->getInfo($param['user_id'],$field);
         return json(['code' => 0, 'msg' => '', 'data' => $data]);
     }
 
@@ -59,6 +66,7 @@ class Index extends Controller
         if($this->request->isAjax()){
             $userMod = new User;
             $param = $this->request->param();
+            $param['user_id'] = $this->isLogin;
             return $userMod->store($param);
         }
     }

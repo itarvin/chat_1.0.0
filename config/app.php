@@ -54,7 +54,7 @@ $retn = [
     // +----------------------------------------------------------------------
 
     // 默认模块名
-    'default_module'         => 'index',
+    'default_module'         => 'home',
     // 禁止访问模块
     'deny_module_list'       => ['common'],
     // 默认控制器名
@@ -145,10 +145,8 @@ $retn = [
 
 ];
 
-
-
 //动态引入站点属性配置
-$file = ['sms','variable','config','cos','blnPay'];
+$file = ['cos','email'];
 foreach ($file as $key => $vo) {
     if (file_exists($file = '../config/setting/'.$vo.'.php')) {
        $retn[$vo] = include $file;
@@ -156,5 +154,4 @@ foreach ($file as $key => $vo) {
        $retn[$vo] = [];
    }
 }
-
 return $retn;

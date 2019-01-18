@@ -1,0 +1,69 @@
+{layout name="index/layout"}
+{if $result}
+<div class="picbox">
+    <h2 class="pictitle">查询结果</h2>
+    <!--box begin-->
+    <div class="Box_con"> <span class="btnl btn" id="btnl"></span> <span class="btnr btn" id="btnr"></span>
+        <div class="conbox" id="BoxUl">
+            <ul>
+                {volist name="result" id="vo"}
+                <li class="cur">
+                    <a href="{:url('index/show',['id' => $vo.id])}">
+                        <img src="{$vo.picture}" alt="{$vo.title}"/>
+                        <p>{$vo.title}</p>
+                    </a>
+                </li>
+                {/volist}
+            </ul>
+        </div>
+    </div>
+    <!--box end-->
+</div>
+{/if}
+<div class="picbox">
+    <h2 class="pictitle"><a href="/">推荐文章</a></h2>
+    <!--box begin-->
+    <div class="Box_con"> <span class="btnl btn" id="btnl"></span> <span class="btnr btn" id="btnr"></span>
+        <div class="conbox" id="BoxUl">
+            <ul>
+                {volist name="recommend" id="vo"}
+                <li class="cur">
+                    <a href="{:url('index/show',['id' => $vo.id])}">
+                        <img src="{$vo.picture}" alt="{$vo.title}"/>
+                        <p>{$vo.title}</p>
+                    </a>
+                </li>
+                {/volist}
+            </ul>
+        </div>
+    </div>
+    <!--box end-->
+</div>
+<div class="newsbox">
+    {volist name="data" id="vo"}
+        <section>
+            <div class="news">
+                <h2 class="newstitle"><span>
+                    <a href="{:url('index/list',['id' => $vo.id])}">更多</a></span>
+                    <b>{$vo['name']}</b>
+                </h2>
+                <ul>
+                    {volist name="vo.article" id="vk"}
+                        <li><a href="{:url('index/show',['id' => $vk.id])}"><span>{$vk.createtime|time_ago}</span>{$vk.title}</a></li>
+                    {/volist}
+                </ul>
+            </div>
+        </section>
+    {/volist}
+
+</div>
+<div class="blank"></div>
+<div class="links">
+    <h2 class="linktitle">合作伙伴</h2>
+    <ul class="link-pic">
+        <li><a href="/"><img src="__HOME__/images/yqlj.png"></a></li>
+    </ul>
+    <ul class="link-text">
+        <li><a href="https://www.itarvin.info">itarvin个人博客</a></li>
+    </ul>
+</div>

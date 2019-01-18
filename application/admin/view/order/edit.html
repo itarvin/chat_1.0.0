@@ -1,0 +1,485 @@
+{layout name="layout/content"}
+<hr data-am-widget="divider" style="" class="am-divider am-divider-dashed" />
+<div class="am-tabs" data-am-tabs="{noSwipe: 1}" >
+	<ul class="am-tabs-nav am-nav am-nav-tabs" id="myTab">
+		<li class="am-active"><a href="#tab1">订单详情</a></li>
+		<li><a href="#tab2" class="tab2">
+			<span class="am-mark">操作日志{if $isSee neq '0'}<sup>{$isSee}</sup>{/if}</span></a></li>
+		{if $data.recode gt 0}
+		<li><a href="#tab3" class="tab3">
+			<span class="am-mark">订单记录<sup>{$data.recode}</sup></span>
+		</a></li>
+		{/if}
+	</ul>
+	<div class="am-tabs-bd">
+		<div class="am-tab-panel am-fade am-in am-active" id="tab1">
+			<hr data-am-widget="divider" style="" class="am-divider am-divider-dashed" />
+			<!-- start1 -->
+			<div class="am-panel am-panel-default">
+				<div class="am-panel-hd box-row">
+					<span>订单详情</span>
+					<div class="row-full"></div>
+					<div class="row-cell">
+						<span class="am-btn am-btn-xs am-btn-success am-icon-openid" data-am-modal="{target:'#order-shift'}"> 订单转接</span>
+					</div>
+				</div>
+
+				<div class="am-panel-bd">
+					<div class="am-scrollable-horizontal">
+						<table class="am-table am-table-bordered am-table-striped am-text-nowrap">
+							<tbody>
+								<tr>
+									<th scope="row">订单号</th>
+									<td>{$data.order_sn}</td>
+									<th scope="row">交易号</th>
+									<td>{$data.trade_id}</td>
+								</tr>
+								<tr>
+									<th scope="row">购货人</th>
+									<td>
+										{if $data.userid}
+										<a href="{:url('admin/member/show',['id'=>$data.userid])}" target="_blank">
+											<span class="userinfo">{$data.userid|userinfo="username"|default=$data.consignee}<span>
+										</a>
+										{else/}
+										<span>匿名<span>
+										{/if}
+									</td>
+									<th scope="row">下单时间</th>
+									<td>{$data.add_time}</td>
+								</tr>
+								<tr>
+									<th scope="row">买家留言 </th>
+									<td>{$data.order_note}</td>
+									<th scope="row">付款时间</th>
+									<td>{$data.pay_time}</td>
+								</tr>
+								<tr>
+									<th scope="row">订单来源</th>
+									<td class="flex-row">{$data.order_from}</td>
+									<th scope="row">支付方式</th>
+									<td>
+										<span {if $data.pay_status eq 1} ajax-edit="{:url('order/change_payway',['id' => $data.id])}" edit-type="select" name="pay_way" option=<?php echo $payway;?>
+										>
+										{$data.pay_way|variable="pay_way"}</span>
+										<span class="am-badge am-radius pay-stat-{$data.pay_status}">{$data.pay_status|variable="pay_status"}</span>
+										{if $data.pay_way != 1}
+											<span class="url-btn am-btn am-btn-warning am-btn-hollow am-round am-btn-xs am-icon-angle-double-down" style="padding:3px 5px;line-height:12px;height:18px;"></span>
+										{/if}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<!-- end1 -->
+			<hr data-am-widget="divider" style="" class="am-divider am-divider-dashed" />
+			<!-- start2 -->
+
+			<form action="{:url('order/change_addr')}" class="am-panel am-panel-default" success="hide" ajax-call="editinfo" ajax-submit>
+				<div class="am-panel-hd">
+					收货人信息
+					<button type="button" class="am-btn am-btn-secondary am-btn-hollow am-btn-xs" id="editInfo">修改信息</button>
+					<span class="up-wrap" style="display:none;">
+						<button type="submit" class="am-btn am-btn-success  am-btn-xs" id="editInfo">确定</button>
+						<button type="button" class="am-btn am-btn-secondary  am-btn-xs" id="edit-cancel">取消</button>
+					</span>
+				</div>
+				<div class="am-panel-bd">
+					<div>
+						<table class="am-table am-table-bordered am-table-striped am-text-nowrap">
+							<tbody>
+								<tr>
+									<input type="hidden" name="id" value="{$data.id}">
+									<th scope="row">收货人</th>
+									<td><span class="tapEdit" name="consignee" required>{$data.consignee}</span></td>
+									<th scope="row">手机</th>
+									<td><span class="tapEdit" name="phone" required pattern="^1\d{10}$">{$data.phone}</span></td>
+								</tr>
+								<tr>
+									<th scope="row">地区</th>
+									<td><span class="tapEdit" name="area" required>{$data.area}</span></td>
+									<th scope="row">快递</th>
+									<td>
+										<span>
+											{if $data.exp_sn neq ''}
+												{$data.exp_com|variable="express"}{$data.exp_com ? ":" : ''}{$data.exp_sn}
+											{else /}
+												<button type="button" class="am-btn am-btn-primary am-btn-hollow am-btn-xs" onclick="dealstatus('3','{$data.order_sn}')">发货</button>
+											{/if}
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">地址</th>
+									<td colspan="3"><span class="tapEdit" name="address" required>{$data.address}</span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</form>
+			<!-- end2 -->
+			<hr data-am-widget="divider" style="" class="am-divider am-divider-dashed" />
+			<!-- start3 -->
+			<div class="am-panel am-panel-default">
+				<div class="am-panel-hd">产品详情</div>
+				<div class="am-panel-bd">
+					<div class="am-scrollable-horizontal">
+						<table class="am-table am-table-bordered am-table-striped am-text-nowrap">
+							<thead>
+								<tr>
+									<th scope="col">商品名称</th>
+									<th scope="col">价格</th>
+									<th scope="col">数量</th>
+									<th scope="col">小计</th>
+									<th scope="col">操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								{assign name="temptotal" value="0" /}
+								{volist name="$data.detail" id="vo"}
+									<tr id='tr_{$vo.id}'>
+										<th>
+											<a href="{:url('index/index/show',['id' => $vo.id])}" target="_blank">
+												{if $vo['thumb'] neq ''}
+													<img src="{$vo['thumb']}" style="width:30px;height:30px;">
+												{/if}
+												{$vo.name}
+											</a>
+										</th>
+										<td>{$vo.price}元</td>
+										<td>
+											{if $data.pay_status  != 1 && ($data.order_status < 3)}
+												<span ajax-edit="{:url('order/change_num',['order_sn' => $data.order_sn,'order_detail' => $vo.id])}" edit-type="input:text" name="num" ajax-call="change_num">{$vo.num}</span>
+											{else /}
+												{$vo.num}
+											{/if}
+										</td>
+										<td>{$vo.price * $vo.num}元</td>
+										<td>
+											<a href="{:url('order/delgoods',['id' => $vo.id])}" ajax-action confirm="您确定要删除当前商品吗？" remove-el="#tr_{$vo.id}" title="删除">
+												<i class="fas fa-trash-alt"></i>删除
+											</a>
+										</td>
+									</tr>
+									{assign name="var " value="$temptotal += $vo.price * $vo.num" /}
+								{/volist}
+							</tbody>
+							<tfoot>
+								<tr>
+									<td colspan="3"></td>
+									<td colspan="2">订单合计:{$temptotal}元</td>
+								</tr>
+								<tr>
+									<td colspan="3"></td>
+									<td colspan="2">
+										应付金额:
+										<span id="changePrice">{$data.order_amount}</span>
+										{if $data.pay_status == 0 || $data.order_status <= 1}
+										<button type="button" data="{$data.id}" class="am-btn am-btn-primary am-btn-xs" data-am-modal="{target: '#edit-amount', closeViaDimmer: 0}">改价</button>
+										{/if}
+									</td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+			</div>
+			<!-- end3 -->
+
+			<hr data-am-widget="divider" style="" class="am-divider am-divider-dashed" />
+			<!-- start4 -->
+			<div class="am-panel am-panel-default">
+				<div class="am-panel-hd">可执行操作    【订单{:variable($data.order_status,'order_status')}】</div>
+				<div class="am-panel-bd">
+					{volist name="$data.action" id="vo"}
+						{if $key == 3  || $key == 9 || $key == 7}
+							<button type="button" class="am-btn am-btn-success" onclick="dealstatus('{$key}','{$data.order_sn}')">{$vo}</button>
+						{elseif $key == 11}
+							<div>订单已完成</div>
+						{else /}
+							<button type="button" confirm="确定要执行【{:variable($data.order_status,'order_status')}】操作吗？" class="am-btn am-btn-success" ajax-action="{:url('order/dealstatus',['sid' => $key, 'order_sn' => $data.order_sn])}">{$vo}</button>
+						{/if}
+					{/volist}
+					<button type="button" class="am-btn am-btn-primary am-icon-yen" ajax-action="{:url('mall/order/pay_query',['order_sn'=>$data.order_sn])}"> 查帐</button>
+				</div>
+			</div>
+			<div style="color:#CCC;line-height:20px;">
+				<small class="am-block">Agent:{$data.sys_agent}</small>
+				<small class="am-block">IP:{$data.sys_ip}</small>
+			</div>
+			<!-- end4 -->
+		</div>
+
+
+		<div class="am-tab-panel am-fade" id="tab2">
+			<hr data-am-widget="divider" style="" class="am-divider am-divider-dashed" />
+			<!-- <div class="am-cf" style="padding: 10px; border: 1px dashed #ddd">
+				<span class="am-fr">共计  条</span>
+			</div> -->
+		    <div class="am-u-sm-12">
+				<div class="am-scrollable-horizontal">
+			        <table width="100%" class="am-table am-table-bordered am-table-striped am-text-nowrap">
+			            <thead>
+			                <tr>
+								<th>操作方法</th>
+								<th>操作人</th>
+								<th>备注</th>
+								<th>操作IP</th>
+								<th>创建时间</th>
+			                </tr>
+			            </thead>
+			            <tbody id="log">
+
+			                <!-- more data -->
+			            </tbody>
+			        </table>
+				</div>
+		    </div>
+		</div>
+
+		<div class="am-tab-panel am-fade" id="tab3">
+			<hr data-am-widget="divider" style="" class="am-divider am-divider-dashed" />
+			<div class="am-cf" style="padding: 10px; border: 1px dashed #ddd">
+				<span class="am-fr">共计 {$data.recode} 条</span>
+			</div>
+		    <div class="am-u-sm-12">
+				<div class="am-scrollable-horizontal">
+			        <table width="100%" class="am-table am-table-bordered am-table-striped am-text-nowrap">
+			            <thead>
+							<tr>
+								<th>ID</th>
+								<th>订单编号</th>
+								<th>总金额</th>
+								<th>收件人</th>
+								<th>订单状态</th>
+								<th>支付状态</th>
+								<th>来源</th>
+							</tr>
+			            </thead>
+			            <tbody id="html">
+			                <!-- more data -->
+			            </tbody>
+			        </table>
+				</div>
+		    </div>
+		</div>
+	</div>
+</div>
+
+<script  type="text/template" id="status-tpl">
+	<form action="{:url('order/dealstatus')}" class="am-form" id="status-form" >
+		<div class="am-form-group">
+			<label for="doc-vld-email-1">备注信息</label>
+			<input type="text" name="info" placeholder='请输入备注信息'/>
+			<input type="hidden" name="order_sn" value="{$data.order_sn}"/>
+			<input type="hidden" name="sid" value="<#=sid#>"/>
+		</div>
+	</form>
+</script>
+
+<script  type="text/template" id="fahuo-tpl">
+	<form action="{:url('order/dealstatus')}" class="am-form" id="fahuo-form" >
+		<div class="am-form-group">
+			<label for="doc-vld-email-1">订单号</label>
+			<input type="text" name="order_sn" value="{$data.order_sn}"  readonly/>
+			<input type="hidden" name="sid" value="<#=sid#>"/>
+		</div>
+		<div class="am-form-group">
+			<label for="doc-vld-email-1">快递公司</label>
+			<select name="exp_com">
+				<#
+				for(var k in exp_arr){
+				#>
+					<option value="<#=k#>" <#=k==exp_com?'selected':''#>><#=exp_arr[k]#></option>
+				<#
+				}
+				#>
+			</select>
+		</div>
+		<div class="am-form-group">
+			<label for="doc-vld-email-1">快递单号</label>
+			<input type="text" name="exp_sn" placeholder="请输入快递单号" value="<#=exp_sn#>" required />
+		</div>
+	</form>
+</script>
+
+<div class="am-modal am-modal-no-btn" tabindex="-1" id="edit-amount">
+	<div class="am-modal-dialog">
+		<div class="am-modal-hd">
+			价格修改
+			<a class="am-close am-close-spin" data-am-modal-close>&times;</a>
+		</div>
+		<div class="am-modal-bd">
+			<form action='{:url("order/change_price")}' class="am-form" id="price-form" ajax-call="amount_change" ajax-submit>
+				<div class="am-form-group">
+					<label>新总价</label>
+					<input type="number" name="price" placeholder="修改后的价格" value="{$data.order_amount}" required/>
+				</div>
+				<div class="am-form-group">
+					<label>备注（修改原因）</label>
+					<input type="text" name="info" placeholder="备注" required/>
+				</div>
+				<input type="hidden" name="order_id" value="{$data.order_sn}" />
+				<div>
+					<button type="submit">立即修改</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="am-modal" tabindex="-1" id="order-shift">
+	<div class="am-modal-dialog">
+		<div class="am-modal-hd">
+			订单转接
+			<a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+		</div>
+		<div class="am-modal-bd">
+			<select id="qianyiID" data-am-selected="{searchBox: 1}" name="currentId">
+				<option value="">请选择目标销售</option>
+				{volist name="otherSell" id="vo"}
+				<option value="{$vo.id}">{$vo.username}</option>
+				{/volist}
+			</select>
+			<button id="sift-btn" class="am-btn am-btn-success" ajax-action="{:url('api/member/order_exchange')}" data-order_sn="{$data.order_sn}" confirm="你确认转接吗？">转接</button>
+		</div>
+	</div>
+</div>
+
+<!-- 订单连接 -->
+<script  type="text/template" id="urls-tpl">
+	<div class="am-text-break">
+		<strong>订单连接<small>（免登录查看）</small></strong>
+		<div class="empty-note pd-a">
+			<small>{:url("mall/order/detail",["order_sn"=>$data.order_sn,'sign'=>$data.sign],'',true)}</small>
+		</div>
+		<strong>支付连接：</strong>
+		<div class="empty-note pd-a">
+			<small>{:url("mall/order/pay",["order_sn"=>$data.order_sn],'',true)}</small>
+		</div>
+	</div>
+</script>
+{load href="__STATIC__/ui/plug/cityPicker/AreaPicker.js" /}
+<script type="text/javascript">
+	$('[name="num"]').on('success',function(e,res){
+		if(res.code==1){
+			window.location.reload(true);
+		}
+	})
+	//订单迁移提示
+	$('#qianyiID').on('change',function(){
+		var txt=$(this).children('option:selected').text(),userid=$(this).val();
+		$('#sift-btn').attr('confirm','你确认转接给<b style="color:#F00">'+txt+'</b>吗？')
+		.data('target_id', userid);
+	});
+	//
+	$('.url-btn').click(function(){
+		$.modal({
+			content:tpl('#urls-tpl',{})
+		});
+	})
+	var $form;
+	$('#editInfo').click(function(){
+		$form=$('.tapEdit').buildform();
+		$(this).hide()
+		$('.up-wrap').show();
+		$('input[name="area"]').cityPicker();
+	});
+	$('#edit-cancel').click(function(){
+		$form.cancel();
+		$('#editInfo').show()
+		$('.up-wrap').hide();
+	})
+	$('[ajax-submit]').on('editinfo',function(e,res){
+		if(res.code){
+			$form.cancel(true);
+			$('#editInfo').show()
+			$('.up-wrap').hide();
+		}
+	})
+
+	//编辑成功，自动关闭窗口
+	$('[ajax-submit]').on('amount_change',function(e,res){
+		var price = $(this).find('[name="price"]').val();
+		if(res){
+			$('#changePrice').text(price);
+			$(this).closest('.am-modal').close();
+		}
+
+	})
+</script>
+<script>
+function dealstatus(statusid,order_sn){
+	var sid = statusid;
+	if(sid == 9){
+		$mod = $.modal({type:'confirm',content:tpl('#status-tpl',{order_sn:order_sn,sid:sid})},{closeOnConfirm:false,
+			onConfirm:function(){
+				$('#status-form').trigger('submit');
+			}
+		});
+		$('#status-form').ajaxsubmit({},function(res){
+			if(res.code){
+				$mod.modal('close');
+			}
+		});
+	}else if (sid == 3 || sid == 7) {
+		$mod = $.modal({type:'confirm',content:tpl('#fahuo-tpl',{order_sn:order_sn,sid:sid,exp_sn:'',exp_com:'',exp_arr:<?php echo $express ;?>})},{closeOnConfirm:false,
+			onConfirm:function(){
+				$('#fahuo-form').trigger('submit');
+			}
+		});
+		$('#fahuo-form').ajaxsubmit({},function(res){
+			if(res.code){
+				$mod.modal('close');
+			}
+		});
+	}
+}
+
+$('#myTab').find('a').on('opened.tabs.amui', function(e) {
+	// 当打开界面时加载数据
+	if($(this).attr('class') == 'tab2'){
+		$.ajax({
+			type: 'post',
+			url: "{:url('order/load_logs')}",
+			data: {userid:"{$data.userid}",id:"{$data.id}"},
+			dataType: 'json',
+			success: function(msg){
+				if(msg.code == 1){
+					var html = "";
+					for (var i=0;i < msg.data.length;i++){
+						var current = msg.data[i];
+						html += '<tr class="gradeX"><td class="am-text-middle">'+current.actions[0]+'/'+current.actions[1]+'/'+current.actions[2]+'</td><td class="am-text-middle">'+current.username+'</td><td class="am-text-middle">'+current.log_note+'</td><td class="am-text-middle">'+current.log_ip+'</td><td class="am-text-middle">'+current.log_time+'</td></tr>';
+					}
+					$('#log').html(html);
+				}else {
+					$.modal(msg.msg);;
+				}
+			},
+		});
+	}else if($(this).attr('class') == 'tab3'){
+		$.ajax({
+			type: 'post',
+			url: "{:url('order/load_record')}",
+			data: {id:"{$data.id}",phone:'{$data.phone}'},
+			dataType: 'json',
+			success: function(msg){
+				if(msg.code == 1){
+					var data = msg.data;
+					var html = "";
+					for (var i = 0;i < data.length;i++){
+						var current = msg.data[i];
+						html += '<tr class="gradeX"><td class="am-text-middle">'+current.id+'</td><td class="am-text-middle"><a target="self"  href="{:url("order/edit")}?id='+current.id+'">'+current.order_sn+'</a></td><td class="am-text-middle"><i class="am-icon-yen"></i>'+current.order_amount+'<br/><i class="am-icon-yen"></i>'+current.pay_amount+'</td><td class="am-text-middle">'+current.consignee+'<br/>'+current.phone+'</td><td class="am-text-middle">'+current.orderstatus+'</td><td class="am-text-middle">'+current.paystatus+'</td><td class="am-text-middle">'+current.sell_name+'</td></tr>';
+					}
+					$('#html').html(html);
+				}else {
+					$.modal(msg.msg);
+				}
+			},
+		});
+	}
+})
+</script>

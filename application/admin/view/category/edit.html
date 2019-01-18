@@ -1,0 +1,99 @@
+{layout name="layout/content"}
+<div class="widget-body am-fr">
+	<form class="am-form tpl-form-border-form tpl-form-border-br" action="{:url('Category/edit')}" method="post" >
+		<div class="am-form-group">
+            <label for="category" class="am-u-sm-3 am-form-label">上级ID</label>
+            <div class="am-u-sm-9">
+				<select data-am-selected name="parentid" id="parentid">
+					<option value="0" {if $data.parentid eq '0'}selected{/if}>顶级分类</option>
+					{volist name="class" id="vk"}
+						<option value="{$vk.id}" {if $data.parentid eq $vk.id}selected{/if} >{:str_repeat('----',$vk.level)}{$vk.name}
+					{/volist}
+				</select>
+            </div>
+        </div>
+		<input type="hidden" name="id" value="{$data.id}">
+		<div class="am-form-group">
+            <label for="module" class="am-u-sm-3 am-form-label">模型</label>
+            <div class="am-u-sm-9">
+				<select data-am-selected name="module" id="module" onchange="chooseModule()">
+					{volist name="module", id="vo"}
+						<option value="{$vo}" {if $data.module == $vo}selected{/if}>{$vo}</option>
+					{/volist}
+				</select>
+            </div>
+        </div>
+
+		<div class="am-form-group">
+            <label for="category" class="am-u-sm-3 am-form-label">分类名称</label>
+            <div class="am-u-sm-9">
+				<input type="text" class="am-form-field tpl-form-no-bg" name="name"  value="{$data.name}" placeholder="请输入分类名称" vali-name="分类名称" vali-rule="requre|min:2">
+            </div>
+        </div>
+
+		<div class="am-form-group">
+	        <label for="title" class="am-u-sm-3 am-form-label">分类标题</label>
+	        <div class="am-u-sm-9">
+	            <input type="text" class="am-form-field tpl-form-no-bg" name="title"  value="{$data.title}" placeholder="请输入分类标题" vali-name="分类标题" vali-rule="requre|min:2">
+	        </div>
+	    </div>
+
+		<div class="am-form-group">
+	        <label for="intro" class="am-u-sm-3 am-form-label">简介</label>
+	        <div class="am-u-sm-9">
+	            <input type="text" class="am-form-field tpl-form-no-bg" name="intro"  value="{$data.intro}" vali-name="简介" placeholder="请输入简介">
+	        </div>
+	    </div>
+
+		<div class="am-form-group">
+	        <label for="templete" class="am-u-sm-3 am-form-label">模板</label>
+	        <div class="am-u-sm-9">
+	            <input type="text" class="am-form-field tpl-form-no-bg" name="templete"  value="{$data.templete}" vali-name="模板" placeholder="模板">
+	        </div>
+	    </div>
+
+		<div class="am-form-group">
+	        <label for="icons" class="am-u-sm-3 am-form-label">图标</label>
+	        <div class="am-u-sm-9">
+	            <input type="text" class="am-form-field tpl-form-no-bg" name="icons"  value="{$data.icons}" vali-name="模板" placeholder="模板">
+	        </div>
+	    </div>
+
+		<div class="am-form-group">
+            <div class="am-u-sm-9 am-u-sm-push-3">
+                <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success ">更新</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+<script type="text/javascript">
+function chooseModule(){
+	var selected = $('#module option:selected').val();
+	$.ajax({
+		type: 'post',
+		url: "{:url('category/edit')}",
+		data: {class:selected},
+		dataType: 'json',
+		success: function(msg){
+			if(msg.code == 1){
+				var result = msg.data;
+				var html = '';
+				var html = '<option value="0">顶级分类</option>';
+				for (var i = 0; i < result.length; i++) {
+					var sign = '';
+					for (var j = 0; j < result[i].level; j++) {
+						sign += '----';
+					}
+					html += "<option value='"+result[i].id+"'>"+sign+result[i].name +"</option>"
+				}
+				$('#parentid').html(html);
+			}else {
+				var html = '<option value="0">顶级分类</option>';
+				$('#parentid').html(html);
+				$.modal(msg.msg);
+			}
+		},
+	});
+}
+</script>

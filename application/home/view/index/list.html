@@ -1,0 +1,43 @@
+{layout name="index/layout"}
+<div class="blogbox">
+    <div class="bloglist">
+        <ul>
+            {volist name="data" id="vo"}
+                <li>
+                    <h2><a href="{:url('index/show',['id' => $vo.id])}">{$vo.title}</a></h2>
+                    <i>
+                        <a href="{:url('index/show',['id' => $vo.id])}">
+                            <img src="{$vo.picture}">
+                        </a>
+                    </i>
+                    <p class="blogtext">
+                        {$vo.keywords}
+                    </p>
+                    <p class="bloginfo">
+                        <span>{$vo.username}</span><span>{$vo.createtime|time_ago}</span>
+                        <span>
+                            <a href="{:url('index/list',['id' => $vo.cateid])}">{$vo.cate_name}</a>
+                        </span>
+                    </p>
+                </li>
+            {/volist}
+        </ul>
+    </div>
+    <div class="pagelist">
+        <div class="am-fr">
+			{$data|raw}
+        </div>
+    </div>
+</div>
+<div class="rside">
+    {volist name="cateData" id="vk"}
+        <div class="news">
+            <h2 class="newstitle"><b>{$vk.name}</b></h2>
+            <ul>
+                {volist name="vk.article" id="kk"}
+                    <li><a href="{:url('index/show',['id' => $kk.id])}"><span>08-30</span>{$kk.title}</a></li>
+                {/volist}
+            </ul>
+        </div>
+    {/volist}
+</div>

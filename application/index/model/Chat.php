@@ -5,7 +5,7 @@ use app\index\model\User;
 /**
  * 应用场景：聊天记录模型类
  * @since   2018/06/19 创建
- * @author  itarvin itarvin@163.com
+ * @author  itarvin itarvin@gmail.com
  */
 class Chat extends Model{
 
